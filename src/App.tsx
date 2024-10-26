@@ -53,7 +53,7 @@ const App = () => {
       const ignoreConditions: boolean =
         (i + 1) % width === 0 || (i + 2) % width === 0;
 
-      if(ignoreConditions) continue
+      if (ignoreConditions) continue;
 
       if (rowOfThree.every((square) => board[square] === decidedColor)) {
         // we have a match
@@ -69,15 +69,44 @@ const App = () => {
 
       // ignore the last three tiles in a row
       const ignoreConditions: boolean =
-        (i + 1) % width === 0 ||
-        (i + 2) % width === 0 ||
-        (i + 3) % width === 0;
+        (i + 1) % width === 0 || (i + 2) % width === 0 || (i + 3) % width === 0;
 
-      if(ignoreConditions) continue
+      if (ignoreConditions) continue;
 
       if (rowOfFour.every((square) => board[square] === decidedColor)) {
         // we have a match
         rowOfFour.forEach((square) => (board[square] = "")); // remove the tiles
+      }
+    }
+  };
+
+  const replenishTopRow = () => {
+    for (let i = 0; i < width; i++) {
+      if (board[i] === "") {
+        board[i] = tileColors[Math.floor(Math.random() * tileColors.length)];
+      }
+    }
+  };
+
+  // move the tile into the square below it if it is empty
+  const moveIntoSquareBelow = () => {
+    for (let i = 0; i < width * width - width; i++) {
+      
+      // create array [0, 1, 2, 3, 4, 5, 6, 7] for the first row in width 8
+      // const firstRow: number[] = Array.from({ length: width }, (_, idx) => idx);
+
+      // console.log(firstRow);
+
+      // if(firstRow.includes(i) && board[i] === "") {
+      //   // we are in the first row
+      //   // set a random color for the empty tile
+      //   board[i] = tileColors[Math.floor(Math.random() * tileColors.length)];
+      // }
+
+      // if the square below is empty, move the tile into it and set the current square to empty
+      if (board[i + width] === "") {
+        board[i + width] = board[i];
+        board[i] = "";
       }
     }
   };
@@ -104,12 +133,21 @@ const App = () => {
       checkForColumnOfThree();
       checkForRowOfFour();
       checkForRowOfThree();
+      moveIntoSquareBelow();
+      replenishTopRow();
       setBoard([...board]);
-    }, 100);
+    }, 1000);
     // clear the interval when the component unmounts
     return () => clearInterval(timer);
-  }, [checkForColumnOfThree, checkForColumnOfFour, checkForRowOfThree, checkForRowOfFour
-    , board]);
+  }, [
+    checkForColumnOfThree,
+    checkForColumnOfFour,
+    checkForRowOfThree,
+    checkForRowOfFour,
+    moveIntoSquareBelow,
+    replenishTopRow,
+    board,
+  ]);
 
   return (
     <div className="app">

@@ -166,11 +166,22 @@ const App = () => {
 
     if (tileBeingDragged && tileBeingReplaced) {
       if (isValidMove) {
-        // reset the tileBeingDragged and tileBeingReplaced states
+        // reset the tileBeingDragged and tileBeingReplaced states and scales
+        (tileBeingDragged as HTMLImageElement).style.transform = "unset";
+        (tileBeingReplaced as HTMLImageElement).style.transform = "unset";
         setTileBeingDragged(null);
         setTileBeingReplaced(null);
       } else {
+
+        (tileBeingReplaced as HTMLImageElement).classList.add("invalidMove");
+        setTimeout(() => {
+          (tileBeingReplaced as HTMLImageElement).classList.remove("invalidMove");
+        }, 300);
+
+
         // set the colors back to their original positions
+        (tileBeingDragged as HTMLImageElement).style.transform = "unset";
+        (tileBeingReplaced as HTMLImageElement).style.transform = "unset";
         board[tileBeingReplacedIndex] = (
           tileBeingReplaced as HTMLImageElement
         ).style.backgroundColor;
@@ -181,6 +192,17 @@ const App = () => {
       }
     }
   };
+
+  const dragEnter = (e: React.DragEvent<HTMLImageElement>) => {
+    // scale the tile on the target to indicate that it is the target
+    e.currentTarget.style.transform = "scale(1.5)";
+    e.currentTarget.style.transition = "transform 0.3s";
+  }
+
+  const dragLeave = (e: React.DragEvent<HTMLImageElement>) => {
+    // reset the scale of the tile
+    e.currentTarget.style.transform = "unset";
+  }
 
   const createBoard = () => {
     const board: string[] = [];
@@ -232,8 +254,9 @@ const App = () => {
               data-id={index}
               draggable="true"
               onDragOver={(e) => e.preventDefault()}
-              onDragEnter={(e) => e.preventDefault()}
-              onDragLeave={(e) => e.preventDefault()}
+              onDragEnter={dragEnter}
+              onDragLeave={dragLeave}
+              
               onDragStart={dragStart}
               onDrop={dragDrop}
               onDragEnd={dragEnd}

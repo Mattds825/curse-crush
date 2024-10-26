@@ -18,3 +18,26 @@
 .noPointer {
   pointer-events: none;
 }
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  25% {
+    transform: translateX(-5px) rotate(-5deg);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translateX(5px) rotate(0deg);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translateX(-5px) rotate(5deg);
+    opacity: 0.75;
+  }
+}
+
+.invalidMove {
+  animation: shake 0.5s ease-in-out;
+}

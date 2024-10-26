@@ -11,10 +11,14 @@ const tileColors: string[] = [
 
 const App = () => {
   const [board, setBoard] = useState<string[]>([]);
+  const [tileBeingDragged, setTileBeingDragged] = useState<EventTarget | null>(
+    null
+  );
+  const [tileBeingReplaced, setTileBeingReplaced] =
+    useState<EventTarget | null>(null);
 
   const checkForColumnOfThree = () => {
     const maxColumnIndex: number = width * (width - 2) - 1; // should be 47 for a width of 8
-    console.log(maxColumnIndex);
     for (let i = 0; i <= maxColumnIndex; i++) {
       const columnOfThree: number[] = [i, i + width, i + width * 2]; // the indexes of the three tiles in the column
       const decidedColor: string = board[i]; // the color of the first tile in the column
@@ -22,8 +26,10 @@ const App = () => {
       if (columnOfThree.every((square) => board[square] === decidedColor)) {
         // we have a match
         columnOfThree.forEach((square) => (board[square] = "")); // remove the tiles
+        return true;
       }
     }
+    return false;
   };
 
   const checkForColumnOfFour = () => {
@@ -40,8 +46,10 @@ const App = () => {
       if (columnOfFour.every((square) => board[square] === decidedColor)) {
         // we have a match
         columnOfFour.forEach((square) => (board[square] = "")); // remove the tiles
+        return true;
       }
     }
+    return false;
   };
 
   const checkForRowOfThree = () => {
@@ -58,8 +66,10 @@ const App = () => {
       if (rowOfThree.every((square) => board[square] === decidedColor)) {
         // we have a match
         rowOfThree.forEach((square) => (board[square] = "")); // remove the tiles
+        return true;
       }
     }
+    return false;
   };
 
   const checkForRowOfFour = () => {
@@ -76,8 +86,10 @@ const App = () => {
       if (rowOfFour.every((square) => board[square] === decidedColor)) {
         // we have a match
         rowOfFour.forEach((square) => (board[square] = "")); // remove the tiles
+        return true;
       }
     }
+    return false;
   };
 
   const replenishTopRow = () => {
@@ -91,12 +103,8 @@ const App = () => {
   // move the tile into the square below it if it is empty
   const moveIntoSquareBelow = () => {
     for (let i = 0; i < width * width - width; i++) {
-      
       // create array [0, 1, 2, 3, 4, 5, 6, 7] for the first row in width 8
       // const firstRow: number[] = Array.from({ length: width }, (_, idx) => idx);
-
-      // console.log(firstRow);
-
       // if(firstRow.includes(i) && board[i] === "") {
       //   // we are in the first row
       //   // set a random color for the empty tile
@@ -107,6 +115,69 @@ const App = () => {
       if (board[i + width] === "") {
         board[i + width] = board[i];
         board[i] = "";
+      }
+    }
+  };
+
+  const dragStart = (e: React.DragEvent<HTMLImageElement>) => {
+    console.log("drag start");
+    setTileBeingDragged(e.target);
+  };
+
+  const dragDrop = (e: React.DragEvent<HTMLImageElement>) => {
+    console.log("drag drop");
+    setTileBeingReplaced(e.target);
+  };
+
+  const dragEnd = (e: React.DragEvent<HTMLImageElement>) => {
+    console.log("drag end");
+
+    // get the indexes of the tiles being dragged and replaced
+    const tileBeingDraggedIndex: number = Number(
+      (tileBeingDragged as HTMLImageElement).getAttribute("data-id")
+    );
+    const tileBeingReplacedIndex: number = Number(
+      (tileBeingReplaced as HTMLImageElement).getAttribute("data-id")
+    );
+
+    console.log(tileBeingDraggedIndex, tileBeingReplacedIndex);
+
+    const validMoves: number[] = [
+      tileBeingDraggedIndex - 1,
+      tileBeingDraggedIndex + 1,
+      tileBeingDraggedIndex - width,
+      tileBeingDraggedIndex + width,
+    ];
+
+    // initially swap the colors in the board
+    board[tileBeingReplacedIndex] = (
+      tileBeingDragged as HTMLImageElement
+    ).style.backgroundColor;
+    board[tileBeingDraggedIndex] = (
+      tileBeingReplaced as HTMLImageElement
+    ).style.backgroundColor;
+
+    const isValidMove: boolean =
+      validMoves.includes(tileBeingReplacedIndex) &&
+      (checkForColumnOfThree() ||
+        checkForColumnOfFour() ||
+        checkForRowOfThree() ||
+        checkForRowOfFour());
+
+    if (tileBeingDragged && tileBeingReplaced) {
+      if (isValidMove) {
+        // reset the tileBeingDragged and tileBeingReplaced states
+        setTileBeingDragged(null);
+        setTileBeingReplaced(null);
+      } else {
+        // set the colors back to their original positions
+        board[tileBeingReplacedIndex] = (
+          tileBeingReplaced as HTMLImageElement
+        ).style.backgroundColor;
+        board[tileBeingDraggedIndex] = (
+          tileBeingDragged as HTMLImageElement
+        ).style.backgroundColor;
+        setBoard([...board]);
       }
     }
   };
@@ -136,7 +207,7 @@ const App = () => {
       moveIntoSquareBelow();
       replenishTopRow();
       setBoard([...board]);
-    }, 1000);
+    }, 100);
     // clear the interval when the component unmounts
     return () => clearInterval(timer);
   }, [
@@ -158,6 +229,14 @@ const App = () => {
               key={index}
               alt={String(index)}
               style={{ backgroundColor: color }}
+              data-id={index}
+              draggable="true"
+              onDragOver={(e) => e.preventDefault()}
+              onDragEnter={(e) => e.preventDefault()}
+              onDragLeave={(e) => e.preventDefault()}
+              onDragStart={dragStart}
+              onDrop={dragDrop}
+              onDragEnd={dragEnd}
             />
           );
         })}

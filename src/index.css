@@ -41,3 +41,22 @@
 .invalidMove {
   animation: shake 0.5s ease-in-out;
 }
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.75;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+.pop {
+  animation: pop 0.3s ease-in-out;
+}

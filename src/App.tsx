@@ -17,6 +17,18 @@ const App = () => {
   const [tileBeingReplaced, setTileBeingReplaced] =
     useState<EventTarget | null>(null);
 
+  const popTiles = (tiles: number[]) => {
+    tiles.forEach((square) => {
+      const tile: HTMLImageElement = document.querySelector(
+        `[data-id="${square}"]`
+      ) as HTMLImageElement;
+      tile.classList.add("pop");
+      setTimeout(() => {
+        tile.classList.remove("pop");
+      }, 300);
+    });
+  };
+
   const checkForColumnOfThree = () => {
     const maxColumnIndex: number = width * (width - 2) - 1; // should be 47 for a width of 8
     for (let i = 0; i <= maxColumnIndex; i++) {
@@ -25,6 +37,10 @@ const App = () => {
 
       if (columnOfThree.every((square) => board[square] === decidedColor)) {
         // we have a match
+
+        // add pop animation to the matched tiles
+        popTiles(columnOfThree);
+
         columnOfThree.forEach((square) => (board[square] = "")); // remove the tiles
         return true;
       }
@@ -45,6 +61,11 @@ const App = () => {
 
       if (columnOfFour.every((square) => board[square] === decidedColor)) {
         // we have a match
+
+
+        // add pop animation to the matched tiles
+        popTiles(columnOfFour);
+
         columnOfFour.forEach((square) => (board[square] = "")); // remove the tiles
         return true;
       }
@@ -65,6 +86,10 @@ const App = () => {
 
       if (rowOfThree.every((square) => board[square] === decidedColor)) {
         // we have a match
+
+        // add pop animation to the matched tiles
+        popTiles(rowOfThree);
+
         rowOfThree.forEach((square) => (board[square] = "")); // remove the tiles
         return true;
       }
@@ -85,6 +110,10 @@ const App = () => {
 
       if (rowOfFour.every((square) => board[square] === decidedColor)) {
         // we have a match
+
+        // add pop animation to the matched tiles
+        popTiles(rowOfFour);
+
         rowOfFour.forEach((square) => (board[square] = "")); // remove the tiles
         return true;
       }

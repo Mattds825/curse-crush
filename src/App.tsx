@@ -132,19 +132,22 @@ const App = () => {
   // move the tile into the square below it if it is empty
   const moveIntoSquareBelow = () => {
     for (let i = 0; i < width * width - width; i++) {
-      // create array [0, 1, 2, 3, 4, 5, 6, 7] for the first row in width 8
-      // const firstRow: number[] = Array.from({ length: width }, (_, idx) => idx);
-      // if(firstRow.includes(i) && board[i] === "") {
-      //   // we are in the first row
-      //   // set a random color for the empty tile
-      //   board[i] = tileColors[Math.floor(Math.random() * tileColors.length)];
-      // }
-
       // if the square below is empty, move the tile into it and set the current square to empty
       if (board[i + width] === "") {
         board[i + width] = board[i];
+
+        // add slidedown animation to the tile
+        const tile: HTMLImageElement = document.querySelector(
+          `[data-id="${i}"]`
+        ) as HTMLImageElement;
+        tile.classList.add("slideDown");
+        setTimeout(() => {
+          tile.classList.remove("slideDown");
+        }, 300);
+
         board[i] = "";
       }
+      
     }
   };
 

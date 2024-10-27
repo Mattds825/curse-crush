@@ -60,3 +60,30 @@
 .pop {
   animation: pop 0.3s ease-in-out;
 }
+
+.slideDown {
+  animation: slideDown 0.5s ease-in-out;
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  25% {
+    transform: translateY(25%);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translateY(50%);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translateY(75%);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}

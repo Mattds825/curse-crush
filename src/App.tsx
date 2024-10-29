@@ -62,7 +62,7 @@ const App = () => {
 
       if (columnOfFour.every((square) => board[square] === decidedColor)) {
         // we have a match
-
+        console.log("checking for column of four");
         // add pop animation to the matched tiles
         popTiles(columnOfFour);
 
@@ -98,6 +98,7 @@ const App = () => {
   };
 
   const checkForRowOfFour = () => {
+    
     for (let i = 0; i < width * width; i++) {
       const rowOfFour: number[] = [i, i + 1, i + 2, i + 3]; // the indexes of the four tiles in the row
       const decidedColor: string = board[i]; // the color of the first tile in the row
@@ -110,7 +111,7 @@ const App = () => {
 
       if (rowOfFour.every((square) => board[square] === decidedColor)) {
         // we have a match
-
+        console.log("checking for row of four");
         // add pop animation to the matched tiles
         popTiles(rowOfFour);
 
@@ -190,10 +191,10 @@ const App = () => {
 
     const isValidMove: boolean =
       validMoves.includes(tileBeingReplacedIndex) &&
-      (checkForColumnOfThree() ||
-        checkForColumnOfFour() ||
-        checkForRowOfThree() ||
-        checkForRowOfFour());
+      (checkForColumnOfFour() ||
+        checkForColumnOfThree() ||
+        checkForRowOfFour() ||
+        checkForRowOfThree());
 
     if (tileBeingDragged && tileBeingReplaced) {
       if (isValidMove) {
@@ -254,8 +255,8 @@ const App = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       checkForColumnOfFour();
-      checkForColumnOfThree();
       checkForRowOfFour();
+      checkForColumnOfThree();
       checkForRowOfThree();
       moveIntoSquareBelow();
       replenishTopRow();
@@ -278,16 +279,30 @@ const App = () => {
       <div className="game">
         {board.map((color: string, index: number) => {
           return (
-            <Tile
-            key={index}              
-              index={index}
-              color={color}
+            // <img
+            //   key={index}
+            //   className="tile"
+            //   data-id={index}
+            //   draggable="true"
+            //   style={{ backgroundColor: color }}
+            //   onDragOver={(e) => e.preventDefault()}
+            //   onDragEnter={dragEnter}
+            //   onDragLeave={dragLeave}
+            //   onDragStart={dragStart}
+            //   onDrop={dragDrop}
+            //   onDragEnd={dragEnd}
+            // />
+            <Tile 
+              key={index}
               dragEnter={dragEnter}
               dragLeave={dragLeave}
               dragStart={dragStart}
               dragDrop={dragDrop}
-              dragEnd={dragEnd}
+              dragEnd={dragEnd} 
+              index={index} 
+              color={color}   
             />
+            
           );
         })}
       </div>

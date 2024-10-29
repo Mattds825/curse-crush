@@ -14,19 +14,29 @@ interface TileProps {
 const Tile: React.FC<TileProps> = (props) => {
   const { index, color, dragEnter, dragLeave, dragStart, dragDrop, dragEnd } =
     props;
+
+  const colorIconMap: { [key: string]: string } = {
+    blue: "𖤐",
+    green: "𓅔",
+    orange: "𓃶",
+    purple: "𓆣",
+    red: "𓁿",
+    yellow: "𓋹",
+  };
+
   return (
-    <div
+    <img
       className="tile"
-      style={{ backgroundColor: color }}
       data-id={index}
       draggable="true"
+      style={{ backgroundColor: color }}
       onDragOver={(e) => e.preventDefault()}
       onDragEnter={dragEnter}
       onDragLeave={dragLeave}
       onDragStart={dragStart}
       onDrop={dragDrop}
       onDragEnd={dragEnd}
-    ></div>
+    />
   );
 };
 

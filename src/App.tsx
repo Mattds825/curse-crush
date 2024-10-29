@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Tile from "./components/Tile";
 const width: number = 8;
 const tileColors: string[] = [
   "blue",
@@ -61,7 +62,6 @@ const App = () => {
 
       if (columnOfFour.every((square) => board[square] === decidedColor)) {
         // we have a match
-
 
         // add pop animation to the matched tiles
         popTiles(columnOfFour);
@@ -147,7 +147,6 @@ const App = () => {
 
         board[i] = "";
       }
-      
     }
   };
 
@@ -204,12 +203,12 @@ const App = () => {
         setTileBeingDragged(null);
         setTileBeingReplaced(null);
       } else {
-
         (tileBeingReplaced as HTMLImageElement).classList.add("invalidMove");
         setTimeout(() => {
-          (tileBeingReplaced as HTMLImageElement).classList.remove("invalidMove");
+          (tileBeingReplaced as HTMLImageElement).classList.remove(
+            "invalidMove"
+          );
         }, 300);
-
 
         // set the colors back to their original positions
         (tileBeingDragged as HTMLImageElement).style.transform = "unset";
@@ -229,12 +228,12 @@ const App = () => {
     // scale the tile on the target to indicate that it is the target
     e.currentTarget.style.transform = "scale(1.5)";
     e.currentTarget.style.transition = "transform 0.3s";
-  }
+  };
 
   const dragLeave = (e: React.DragEvent<HTMLImageElement>) => {
     // reset the scale of the tile
     e.currentTarget.style.transform = "unset";
-  }
+  };
 
   const createBoard = () => {
     const board: string[] = [];
@@ -279,19 +278,15 @@ const App = () => {
       <div className="game">
         {board.map((color: string, index: number) => {
           return (
-            <img
-              key={index}
-              alt={String(index)}
-              style={{ backgroundColor: color }}
-              data-id={index}
-              draggable="true"
-              onDragOver={(e) => e.preventDefault()}
-              onDragEnter={dragEnter}
-              onDragLeave={dragLeave}
-              
-              onDragStart={dragStart}
-              onDrop={dragDrop}
-              onDragEnd={dragEnd}
+            <Tile
+            key={index}              
+              index={index}
+              color={color}
+              dragEnter={dragEnter}
+              dragLeave={dragLeave}
+              dragStart={dragStart}
+              dragDrop={dragDrop}
+              dragEnd={dragEnd}
             />
           );
         })}

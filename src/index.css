@@ -15,6 +15,11 @@
   height: 70px;
 }
 
+.game .tile {
+  width: 70px;
+  height: 70px;
+}
+
 .noPointer {
   pointer-events: none;
 }

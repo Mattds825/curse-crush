@@ -1,4 +1,5 @@
 import React from "react";
+import diamondTexture from "../assets/diamond-texture.jpg";
 import PropTypes from "prop-types";
 
 interface TileProps {
@@ -50,7 +51,7 @@ const Tile: React.FC<TileProps> = (props) => {
       className="tile"
       data-id={index}
       draggable="true"
-      style={{ backgroundColor: color}}
+      style={{ backgroundColor: color, backgroundImage: `url(${diamondTexture})`, backgroundBlendMode: "multiply", boxShadow: `inset 0 0 50px ${colorToHexMap[color]}` }}
       onDragOver={(e) => e.preventDefault()}
       onDragEnter={dragEnter}
       onDragLeave={dragLeave}

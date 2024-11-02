@@ -19,6 +19,20 @@ body {
   align-items: center;
 }
 
+.symbols{
+  display: flex;  
+  gap: 20px;
+  color: #6a6a6a;
+}
+
+.symbols p{
+  font-size: 2rem;
+  margin: 0;
+}
+
+.symbols p.active{
+  color: white;
+}
 .game{
   display: grid;
   grid-template-columns: repeat(8, 1fr);
@@ -42,6 +56,13 @@ body {
 .scoreBoard h1{
   color: white;
   font-size: 2rem;
+}
+
+.tile{
+  background: linear-gradient(-45deg, #747474 40%, #ffffff 50%, #484848 60%);
+  /* background-size: 300%; */
+  /* background-position-x: 100%; */
+  animation: shimmer 1s  linear;
 }
 
 .tile p{
@@ -125,5 +146,11 @@ body {
   100% {
     transform: translateY(100%);
     opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  to {
+     background-position-x: 0%
   }
 }

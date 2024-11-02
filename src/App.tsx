@@ -17,12 +17,13 @@ const App = () => {
   );
   const [tileBeingReplaced, setTileBeingReplaced] =
     useState<EventTarget | null>(null);
+  const [score, setScore] = useState<number>(0);
 
   const popTiles = (tiles: number[]) => {
     tiles.forEach((square) => {
-      const tile: HTMLImageElement = document.querySelector(
+      const tile: HTMLElement = document.querySelector(
         `[data-id="${square}"]`
-      ) as HTMLImageElement;
+      ) as HTMLElement;
       tile.classList.add("pop");
       setTimeout(() => {
         tile.classList.remove("pop");
@@ -36,6 +37,7 @@ const App = () => {
       const columnOfThree: number[] = [i, i + width, i + width * 2]; // the indexes of the three tiles in the column
       const decidedColor: string = board[i]; // the color of the first tile in the column
 
+
       if (columnOfThree.every((square) => board[square] === decidedColor)) {
         // we have a match
 
@@ -43,6 +45,7 @@ const App = () => {
         popTiles(columnOfThree);
 
         columnOfThree.forEach((square) => (board[square] = "")); // remove the tiles
+        setScore((prevScore) => prevScore + 3); // increment the score by 3
         return true;
       }
     }
@@ -67,6 +70,7 @@ const App = () => {
         popTiles(columnOfFour);
 
         columnOfFour.forEach((square) => (board[square] = "")); // remove the tiles
+        setScore((prevScore) => prevScore + 4); // increment the score by 4
         return true;
       }
     }
@@ -91,6 +95,7 @@ const App = () => {
         popTiles(rowOfThree);
 
         rowOfThree.forEach((square) => (board[square] = "")); // remove the tiles
+        setScore((prevScore) => prevScore + 3); // increment the score by 3
         return true;
       }
     }
@@ -116,6 +121,7 @@ const App = () => {
         popTiles(rowOfFour);
 
         rowOfFour.forEach((square) => (board[square] = "")); // remove the tiles
+        setScore((prevScore) => prevScore + 4); // increment the score by 4
         return true;
       }
     }
@@ -138,9 +144,9 @@ const App = () => {
         board[i + width] = board[i];
 
         // add slidedown animation to the tile
-        const tile: HTMLImageElement = document.querySelector(
+        const tile: HTMLElement = document.querySelector(
           `[data-id="${i}"]`
-        ) as HTMLImageElement;
+        ) as HTMLElement;
         tile.classList.add("slideDown");
         setTimeout(() => {
           tile.classList.remove("slideDown");
@@ -151,25 +157,25 @@ const App = () => {
     }
   };
 
-  const dragStart = (e: React.DragEvent<HTMLImageElement>) => {
+  const dragStart = (e: React.DragEvent<HTMLElement>) => {
     console.log("drag start");
     setTileBeingDragged(e.target);
   };
 
-  const dragDrop = (e: React.DragEvent<HTMLImageElement>) => {
+  const dragDrop = (e: React.DragEvent<HTMLElement>) => {
     console.log("drag drop");
     setTileBeingReplaced(e.target);
   };
 
-  const dragEnd = (e: React.DragEvent<HTMLImageElement>) => {
+  const dragEnd = (e: React.DragEvent<HTMLElement>) => {
     console.log("drag end");
 
     // get the indexes of the tiles being dragged and replaced
     const tileBeingDraggedIndex: number = Number(
-      (tileBeingDragged as HTMLImageElement).getAttribute("data-id")
+      (tileBeingDragged as HTMLElement).getAttribute("data-id")
     );
     const tileBeingReplacedIndex: number = Number(
-      (tileBeingReplaced as HTMLImageElement).getAttribute("data-id")
+      (tileBeingReplaced as HTMLElement).getAttribute("data-id")
     );
 
     console.log(tileBeingDraggedIndex, tileBeingReplacedIndex);
@@ -183,10 +189,10 @@ const App = () => {
 
     // initially swap the colors in the board
     board[tileBeingReplacedIndex] = (
-      tileBeingDragged as HTMLImageElement
+      tileBeingDragged as HTMLElement
     ).style.backgroundColor;
     board[tileBeingDraggedIndex] = (
-      tileBeingReplaced as HTMLImageElement
+      tileBeingReplaced as HTMLElement
     ).style.backgroundColor;
 
     const isValidMove: boolean =
@@ -199,39 +205,40 @@ const App = () => {
     if (tileBeingDragged && tileBeingReplaced) {
       if (isValidMove) {
         // reset the tileBeingDragged and tileBeingReplaced states and scales
-        (tileBeingDragged as HTMLImageElement).style.transform = "unset";
-        (tileBeingReplaced as HTMLImageElement).style.transform = "unset";
+        (tileBeingDragged as HTMLElement).style.transform = "unset";
+        (tileBeingReplaced as HTMLElement).style.transform = "unset";
         setTileBeingDragged(null);
         setTileBeingReplaced(null);
       } else {
-        (tileBeingReplaced as HTMLImageElement).classList.add("invalidMove");
+        (tileBeingReplaced as HTMLElement).classList.add("invalidMove");
         setTimeout(() => {
-          (tileBeingReplaced as HTMLImageElement).classList.remove(
+          (tileBeingReplaced as HTMLElement).classList.remove(
             "invalidMove"
           );
         }, 300);
+        
 
         // set the colors back to their original positions
-        (tileBeingDragged as HTMLImageElement).style.transform = "unset";
-        (tileBeingReplaced as HTMLImageElement).style.transform = "unset";
+        (tileBeingDragged as HTMLElement).style.transform = "unset";
+        (tileBeingReplaced as HTMLElement).style.transform = "unset";
         board[tileBeingReplacedIndex] = (
-          tileBeingReplaced as HTMLImageElement
+          tileBeingReplaced as HTMLElement
         ).style.backgroundColor;
         board[tileBeingDraggedIndex] = (
-          tileBeingDragged as HTMLImageElement
+          tileBeingDragged as HTMLElement
         ).style.backgroundColor;
         setBoard([...board]);
       }
     }
   };
 
-  const dragEnter = (e: React.DragEvent<HTMLImageElement>) => {
+  const dragEnter = (e: React.DragEvent<HTMLElement>) => {
     // scale the tile on the target to indicate that it is the target
     e.currentTarget.style.transform = "scale(1.5)";
     e.currentTarget.style.transition = "transform 0.3s";
   };
 
-  const dragLeave = (e: React.DragEvent<HTMLImageElement>) => {
+  const dragLeave = (e: React.DragEvent<HTMLElement>) => {
     // reset the scale of the tile
     e.currentTarget.style.transform = "unset";
   };
@@ -276,6 +283,9 @@ const App = () => {
 
   return (
     <div className="app">
+      <div className="scoreBoard">
+        <h1>Score: {score}</h1>
+      </div>
       <div className="game">
         {board.map((color: string, index: number) => {
           return (

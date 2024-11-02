@@ -12,6 +12,8 @@ body {
 .app {
   height: 100vh;
   display: flex;
+  flex-direction: column;
+  gap: 20px;
   padding: 30px;    
   justify-content: center;
   align-items: center;
@@ -37,6 +39,11 @@ body {
   border: 1px solid white;  
 }
 
+.scoreBoard h1{
+  color: white;
+  font-size: 2rem;
+}
+
 .tile p{
   font-size: 2rem;
   color: white;
@@ -44,6 +51,12 @@ body {
 
 .noPointer {
   pointer-events: none;
+}
+
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 }
 
 @keyframes shake {

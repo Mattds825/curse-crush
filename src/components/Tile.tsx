@@ -24,19 +24,42 @@ const Tile: React.FC<TileProps> = (props) => {
     yellow: "𓋹",
   };
 
+  const colorToHexMap: { [key: string]: string } = {
+    blue: "#1004b6",
+    green: "#085c08",
+    orange: "#b36500",
+    purple: "#500e50",
+    red: "#7d0000",
+    yellow: "#ae9f00",
+  };
+
   return (
-    <img
+    // <img
+    //   className="tile"
+    //   data-id={index}
+    //   draggable="true"
+    //   style={{ backgroundColor: color }}
+    //   onDragOver={(e) => e.preventDefault()}
+    //   onDragEnter={dragEnter}
+    //   onDragLeave={dragLeave}
+    //   onDragStart={dragStart}
+    //   onDrop={dragDrop}
+    //   onDragEnd={dragEnd}
+    // />
+    <div
       className="tile"
       data-id={index}
       draggable="true"
-      style={{ backgroundColor: color }}
+      style={{ backgroundColor: color}}
       onDragOver={(e) => e.preventDefault()}
       onDragEnter={dragEnter}
       onDragLeave={dragLeave}
       onDragStart={dragStart}
       onDrop={dragDrop}
       onDragEnd={dragEnd}
-    />
+    >
+      <p className="prevent-select noPointer">{colorIconMap[color]}</p>
+    </div>
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Tile from "./components/Tile";
+import PoemModal from "./components/PoemModal";
 const width: number = 8;
 const tileColors: string[] = [
   "blue",
@@ -10,19 +11,6 @@ const tileColors: string[] = [
   "yellow",
 ];
 
-const poem = `In the darkest night, where wisdom owls soar,
-A creature whispers secrets, but tell me, what Fo(u)r?.
-When the sky reveals a guiding star,
-Its sparkle whispers softly three wishes afar.
-On cliffs where the horned one stands with might,
-Face it with courage, again, again, again, again, and again you fight.
-In shadows deep, where beetles crawl,
-Two hushed steps, then the shattering fall.
-A single eye sees all that’s true,
-It blinks, it stares thrice it glares
-And at the end, a key for the locks,
-One strike alone the door unlocks…`
-
 const App = () => {
   const [board, setBoard] = useState<string[]>([]);
   const [tileBeingDragged, setTileBeingDragged] = useState<EventTarget | null>(
@@ -31,6 +19,7 @@ const App = () => {
   const [tileBeingReplaced, setTileBeingReplaced] =
     useState<EventTarget | null>(null);
   const [score, setScore] = useState<number>(0);
+  const [showPoemModal, setShowPoemModal] = useState<boolean>(false);
 
   const popTiles = (tiles: number[]) => {
     tiles.forEach((square) => {
@@ -49,7 +38,6 @@ const App = () => {
     for (let i = 0; i <= maxColumnIndex; i++) {
       const columnOfThree: number[] = [i, i + width, i + width * 2]; // the indexes of the three tiles in the column
       const decidedColor: string = board[i]; // the color of the first tile in the column
-
 
       if (columnOfThree.every((square) => board[square] === decidedColor)) {
         // we have a match
@@ -116,7 +104,6 @@ const App = () => {
   };
 
   const checkForRowOfFour = () => {
-    
     for (let i = 0; i < width * width; i++) {
       const rowOfFour: number[] = [i, i + 1, i + 2, i + 3]; // the indexes of the four tiles in the row
       const decidedColor: string = board[i]; // the color of the first tile in the row
@@ -225,11 +212,8 @@ const App = () => {
       } else {
         (tileBeingReplaced as HTMLElement).classList.add("invalidMove");
         setTimeout(() => {
-          (tileBeingReplaced as HTMLElement).classList.remove(
-            "invalidMove"
-          );
+          (tileBeingReplaced as HTMLElement).classList.remove("invalidMove");
         }, 300);
-        
 
         // set the colors back to their original positions
         (tileBeingDragged as HTMLElement).style.transform = "unset";
@@ -296,7 +280,8 @@ const App = () => {
 
   return (
     <div className="app">
-      <div className="symbols">    
+      {showPoemModal && <PoemModal setShowPoemModal={setShowPoemModal}/>}
+      <div className="symbols">
         <p>𓅔</p>
         <p>𖤐</p>
         <p>𓃶</p>
@@ -304,6 +289,13 @@ const App = () => {
         <p>𓁿</p>
         <p>𓋹</p>
       </div>
+      <button
+        onClick={() => {
+          setShowPoemModal(true);
+        }}
+      >
+        Show Poem
+      </button>
       <div className="scoreBoard">
         <h1>Score: {score}</h1>
       </div>
@@ -323,17 +315,16 @@ const App = () => {
             //   onDrop={dragDrop}
             //   onDragEnd={dragEnd}
             // />
-            <Tile 
+            <Tile
               key={index}
               dragEnter={dragEnter}
               dragLeave={dragLeave}
               dragStart={dragStart}
               dragDrop={dragDrop}
-              dragEnd={dragEnd} 
-              index={index} 
-              color={color}   
+              dragEnd={dragEnd}
+              index={index}
+              color={color}
             />
-            
           );
         })}
       </div>

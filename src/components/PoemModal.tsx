@@ -6,18 +6,7 @@ interface PoemModalProps {
 
 const PoemModal:React.FC<PoemModalProps> = (props) => {
   const { setShowPoemModal } = props;
-  const poem = `In the darkest night, where wisdom owls soar,
-A creature whispers secrets, but tell me, what Fo(u)r?.
-When the sky reveals a guiding star,
-Its sparkle whispers softly three wishes afar.
-On cliffs where the horned one stands with might,
-Face it with courage, again, again, again, again, and again you fight.
-In shadows deep, where beetles crawl,
-Two hushed steps, then the shattering fall.
-A single eye sees all that’s true,
-It blinks, it stares thrice it glares
-And at the end, a key for the locks,
-One strike alone the door unlocks…`;
+
 
   return (
     <div className="poemModal">

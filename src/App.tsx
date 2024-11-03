@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Tile from "./components/Tile";
 import PoemModal from "./components/PoemModal";
 const width: number = 8;
@@ -10,6 +10,25 @@ const tileColors: string[] = [
   "red",
   "yellow",
 ];
+const poem = `In the darkest night, where wisdom owls soar,
+A creature whispers secrets, but tell me, what Fo(u)r?.
+When the sky reveals a guiding star,
+Its sparkle whispers softly three wishes afar.
+On cliffs where the horned one stands with might,
+Face it with courage, again, again, again, again, and again you fight.
+In shadows deep, where beetles crawl,
+Two hushed steps, then the shattering fall.
+A single eye sees all that’s true,
+It blinks, it stares thrice it glares
+And at the end, a key for the locks,
+One strike alone the door unlocks…`;
+
+enum direction{
+  UP,
+  DOWN,
+  LEFT,
+  RIGHT
+}
 
 const App = () => {
   const [board, setBoard] = useState<string[]>([]);
@@ -20,6 +39,12 @@ const App = () => {
     useState<EventTarget | null>(null);
   const [score, setScore] = useState<number>(0);
   const [showPoemModal, setShowPoemModal] = useState<boolean>(false);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
+  const [poemWords, setPoemWords] = useState<string[]>([]);
+  const [poemWordsCoordinates, setPoemWordsCoordinates] = useState<{
+    [key: string]: { x: number | undefined; y: number | undefined; dir: direction };
+  }>({});
 
   const popTiles = (tiles: number[]) => {
     tiles.forEach((square) => {
@@ -251,10 +276,143 @@ const App = () => {
     setBoard(board);
   };
 
+  const createPoemWords = () => {
+    const words = poem.split(/\s+/);
+    const randomWords = [];
+
+    const randomWordsMap: {
+      [key: string]: { x: number | undefined; y: number | undefined, dir: direction };
+    } = {};
+
+    for (let i = 0; i < 10; i++) {
+      const randomIndex = Math.floor(Math.random() * words.length);
+      const randomDirection = Math.floor(Math.random() * 4);
+      randomWords.push(words[randomIndex]);
+      randomWordsMap[words[randomIndex]] = { x: undefined, y: undefined, dir: randomDirection };
+    }
+
+    setPoemWordsCoordinates(randomWordsMap);
+    setPoemWords(randomWords);
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      setContext(ctx);
+    }
+  };
+
+  const drawPoemWordsFlashing = (frameCount: number) => {
+    // this function 10 random words from the poem to the canvas
+    const canvas = document.getElementById(
+      "floatingWords"
+    ) as HTMLCanvasElement;
+    if (!context) return;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    poemWords.forEach((word) => {
+      let x: number = 0;
+      let y: number = 0;
+      if (!poemWordsCoordinates[word].x || !poemWordsCoordinates[word].y) {
+        x = Math.random() * canvas.width + Math.sin(frameCount * 0.01) * 10;
+        y = Math.random() * canvas.height + Math.cos(frameCount * 0.01) * 10;
+        poemWordsCoordinates[word].x = x;
+        poemWordsCoordinates[word].y = y;
+      }else if(poemWordsCoordinates[word].x > canvas.width || poemWordsCoordinates[word].y > canvas.height || poemWordsCoordinates[word].x < 0 || poemWordsCoordinates[word].y < 0){
+        x = Math.random() * canvas.width + Math.sin(frameCount * 0.01) * 10;
+        y = Math.random() * canvas.height + Math.cos(frameCount * 0.01) * 10;
+        poemWordsCoordinates[word].x = x;
+        poemWordsCoordinates[word].y = y;
+
+      } else {
+        // move x and y by a small amount in the direction of the word
+        switch(poemWordsCoordinates[word].dir){
+          case direction.UP:
+            y = poemWordsCoordinates[word].y - 1;
+            x = poemWordsCoordinates[word].x;
+            break;
+          case direction.DOWN:
+            y = poemWordsCoordinates[word].y + 1;
+            x = poemWordsCoordinates[word].x;
+            break;
+          case direction.LEFT:
+            x = poemWordsCoordinates[word].x - 1;
+            y = poemWordsCoordinates[word].y;
+            break;
+          case direction.RIGHT:
+            x = poemWordsCoordinates[word].x + 1;
+            y = poemWordsCoordinates[word].y;
+            break;
+        }
+        poemWordsCoordinates[word].x = x;
+        poemWordsCoordinates[word].y = y;        
+      }
+      context.font = "20px Arial";
+      context.filter = "blur(200px)";
+
+      /*
+      context.fillStyle = `rgba(${Math.sin(frameCount * 0.1) * 128 + 128}, ${
+        Math.sin(frameCount * 0.1 + 2) * 128 + 128
+      }, ${Math.sin(frameCount * 0.1 + 4) * 128 + 128}, 0.5)`;
+      context.shadowColor = `rgba(${Math.sin(frameCount * 0.1) * 128 + 128}, ${
+        Math.sin(frameCount * 0.1 + 2) * 128 + 128
+      }, ${Math.sin(frameCount * 0.1 + 4) * 128 + 128}, 0.5)`;
+      context.shadowBlur = 20;
+      */
+
+      /*
+      // create a gradient for the text
+      const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
+      gradient.addColorStop(0, "red");
+      gradient.addColorStop(0.5, "black");
+      gradient.addColorStop(1, "red");
+
+      // set the fill style to the gradient
+      context.fillStyle = gradient;
+
+      // add a shadow to the text
+      context.shadowColor = "red";
+      context.shadowBlur = 20;
+      context.shadowOffsetX = 5;
+      context.shadowOffsetY = 5;
+
+      */
+
+      // the words should be white with an opacity of 0.5
+      context.fillStyle = "rgba(255, 255, 255, 0.2)";
+      context.shadowColor = "white";
+      context.shadowBlur = 20 * Math.sin(frameCount * 1000);
+      context.shadowOffsetX = 5 * Math.sin(frameCount * 0.01);
+      context.shadowOffsetY = 5 * Math.cos(frameCount * 0.01);
+
+      context.fillText(word, x, y);
+    });
+  };
+
   // create the board when the component mounts
   useEffect(() => {
     createBoard();
+    createPoemWords();
   }, []);
+
+  useEffect(() => {
+    let frameCount: number = 0;
+    let animationFrameId: number;
+
+    // Check if null context has been replaced on component mount
+    if (context) {
+      //Our draw came here
+      const render = () => {
+        frameCount++;
+        drawPoemWordsFlashing(frameCount);
+        animationFrameId = window.requestAnimationFrame(render);
+      };
+      render();
+    }
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+    };
+  }, [drawPoemWordsFlashing, context]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -280,7 +438,7 @@ const App = () => {
 
   return (
     <div className="app">
-      {showPoemModal && <PoemModal setShowPoemModal={setShowPoemModal}/>}
+      {showPoemModal && <PoemModal setShowPoemModal={setShowPoemModal} />}
       <div className="symbols">
         <p>𓅔</p>
         <p>𖤐</p>
@@ -327,6 +485,20 @@ const App = () => {
             />
           );
         })}
+      </div>
+      <div className="floatingWordsContainer">
+        {/* a canvas element that covers the entire screen */}
+        <canvas
+          ref={canvasRef}
+          id="floatingWords"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            zIndex: 100,
+            pointerEvents: "none",
+          }}
+        ></canvas>
       </div>
     </div>
   );

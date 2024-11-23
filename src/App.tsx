@@ -23,11 +23,11 @@ It blinks, it stares thrice it glares
 And at the end, a key for the locks,
 One strike alone the door unlocks…`;
 
-enum direction{
+enum direction {
   UP,
   DOWN,
   LEFT,
-  RIGHT
+  RIGHT,
 }
 
 const App = () => {
@@ -43,8 +43,60 @@ const App = () => {
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
   const [poemWords, setPoemWords] = useState<string[]>([]);
   const [poemWordsCoordinates, setPoemWordsCoordinates] = useState<{
-    [key: string]: { x: number | undefined; y: number | undefined; dir: direction };
+    [key: string]: {
+      x: number | undefined;
+      y: number | undefined;
+      dir: direction;
+    };
   }>({});
+
+  const initialSymbolDataMaps = {
+    owl: {
+      color: "yellow",
+      poem: "In the darkest night, where wisdom owls soar",
+      discovered: false,
+      symbol: "𓅔",
+    },
+    star: {
+      color: "blue",
+      poem: "When the sky reveals a guiding star",
+      discovered: false,
+      symbol: "𖤐",
+    },
+    goat: {
+      color: "orange",
+      poem: "On cliffs where the horned one stands with might",
+      discovered: false,
+      symbol: "𓃶",
+    },
+    beetle: {
+      color: "purple",
+      poem: "In shadows deep, where beetles crawl",
+      discovered: false,
+      symbol: "𓆣",
+    },
+    eye: {
+      color: "red",
+      poem: "A single eye sees all that’s true",
+      discovered: false,
+      symbol: "𓁿",
+    },
+    key: {
+      color: "yellow",
+      poem: "And at the end, a key for the locks",
+      discovered: false,
+      symbol: "𓋹",
+    },
+  };
+
+  const [symbolDataMaps, setSymbolDataMaps] = useState<{
+    [key: string]: {
+      color: string;
+      poem: string;
+      discovered: boolean;
+      symbol: string;
+    };
+  }>(initialSymbolDataMaps);
 
   const popTiles = (tiles: number[]) => {
     tiles.forEach((square) => {
@@ -281,14 +333,22 @@ const App = () => {
     const randomWords = [];
 
     const randomWordsMap: {
-      [key: string]: { x: number | undefined; y: number | undefined, dir: direction };
+      [key: string]: {
+        x: number | undefined;
+        y: number | undefined;
+        dir: direction;
+      };
     } = {};
 
     for (let i = 0; i < 10; i++) {
       const randomIndex = Math.floor(Math.random() * words.length);
       const randomDirection = Math.floor(Math.random() * 4);
       randomWords.push(words[randomIndex]);
-      randomWordsMap[words[randomIndex]] = { x: undefined, y: undefined, dir: randomDirection };
+      randomWordsMap[words[randomIndex]] = {
+        x: undefined,
+        y: undefined,
+        dir: randomDirection,
+      };
     }
 
     setPoemWordsCoordinates(randomWordsMap);
@@ -318,15 +378,19 @@ const App = () => {
         y = Math.random() * canvas.height + Math.cos(frameCount * 0.01) * 10;
         poemWordsCoordinates[word].x = x;
         poemWordsCoordinates[word].y = y;
-      }else if(poemWordsCoordinates[word].x > canvas.width || poemWordsCoordinates[word].y > canvas.height || poemWordsCoordinates[word].x < 0 || poemWordsCoordinates[word].y < 0){
+      } else if (
+        poemWordsCoordinates[word].x > canvas.width ||
+        poemWordsCoordinates[word].y > canvas.height ||
+        poemWordsCoordinates[word].x < 0 ||
+        poemWordsCoordinates[word].y < 0
+      ) {
         x = Math.random() * canvas.width + Math.sin(frameCount * 0.01) * 10;
         y = Math.random() * canvas.height + Math.cos(frameCount * 0.01) * 10;
         poemWordsCoordinates[word].x = x;
         poemWordsCoordinates[word].y = y;
-
       } else {
         // move x and y by a small amount in the direction of the word
-        switch(poemWordsCoordinates[word].dir){
+        switch (poemWordsCoordinates[word].dir) {
           case direction.UP:
             y = poemWordsCoordinates[word].y - 1;
             x = poemWordsCoordinates[word].x;
@@ -345,8 +409,9 @@ const App = () => {
             break;
         }
         poemWordsCoordinates[word].x = x;
-        poemWordsCoordinates[word].y = y;        
+        poemWordsCoordinates[word].y = y;
       }
+      // setPoemWordsCoordinates((prev) => ({ ...prev, [word]: { x, y, dir: poemWordsCoordinates[word].dir } }));
       context.font = "20px Arial";
       context.filter = "blur(200px)";
 
@@ -440,12 +505,18 @@ const App = () => {
     <div className="app">
       {showPoemModal && <PoemModal setShowPoemModal={setShowPoemModal} />}
       <div className="symbols">
-        <p>𓅔</p>
-        <p>𖤐</p>
-        <p>𓃶</p>
-        <p>𓆣</p>
-        <p>𓁿</p>
-        <p>𓋹</p>
+        {Object.keys(symbolDataMaps).map((key) => {
+          return (
+            <div
+              key={key}
+              className={`symbol ${
+                symbolDataMaps[key].discovered ? "discovered" : ""
+              }`}
+            >
+              <p>{ symbolDataMaps[key].discovered ? symbolDataMaps[key].symbol : "?"}</p>
+            </div>
+          );
+        })}
       </div>
       <button
         onClick={() => {

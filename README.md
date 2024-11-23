@@ -11,6 +11,9 @@ in a larger horror game
 - game mechanics similar to candy crush
 - interesting visuals with the poem 
 - board changes as you solve more symbols
+- poem modal
+    - show hints to the symbols
+    - user can hover on the correct symbol word to find a puzzle to get the right number (2nd round)
 
 ## Resources
 

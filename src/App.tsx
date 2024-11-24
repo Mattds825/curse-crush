@@ -67,7 +67,7 @@ const App = () => {
       discovered: false,
       symbol: "𖤐",
       currAmount: 0,
-      targetAmount: 4
+      targetAmount: 4,
     },
     goat: {
       color: "orange",
@@ -75,7 +75,7 @@ const App = () => {
       discovered: false,
       symbol: "𓃶",
       currAmount: 0,
-      targetAmount: 4
+      targetAmount: 4,
     },
     beetle: {
       color: "purple",
@@ -83,7 +83,7 @@ const App = () => {
       discovered: false,
       symbol: "𓆣",
       currAmount: 0,
-      targetAmount: 4
+      targetAmount: 4,
     },
     eye: {
       color: "red",
@@ -91,7 +91,7 @@ const App = () => {
       discovered: false,
       symbol: "𓁿",
       currAmount: 0,
-      targetAmount: 4
+      targetAmount: 4,
     },
     key: {
       color: "yellow",
@@ -99,7 +99,7 @@ const App = () => {
       discovered: false,
       symbol: "𓋹",
       currAmount: 0,
-      targetAmount: 4
+      targetAmount: 4,
     },
   };
 
@@ -109,8 +109,8 @@ const App = () => {
       poem: string;
       discovered: boolean;
       symbol: string;
-      currAmount: number,
-      targetAmount: number
+      currAmount: number;
+      targetAmount: number;
     };
   }>({
     owl: {
@@ -127,7 +127,7 @@ const App = () => {
       discovered: false,
       symbol: "𖤐",
       currAmount: 0,
-      targetAmount: 4
+      targetAmount: 4,
     },
     goat: {
       color: "orange",
@@ -135,7 +135,7 @@ const App = () => {
       discovered: false,
       symbol: "𓃶",
       currAmount: 0,
-      targetAmount: 4
+      targetAmount: 4,
     },
     beetle: {
       color: "purple",
@@ -143,7 +143,7 @@ const App = () => {
       discovered: false,
       symbol: "𓆣",
       currAmount: 0,
-      targetAmount: 4
+      targetAmount: 4,
     },
     eye: {
       color: "red",
@@ -151,7 +151,7 @@ const App = () => {
       discovered: false,
       symbol: "𓁿",
       currAmount: 0,
-      targetAmount: 4
+      targetAmount: 4,
     },
     key: {
       color: "yellow",
@@ -159,14 +159,13 @@ const App = () => {
       discovered: false,
       symbol: "𓋹",
       currAmount: 0,
-      targetAmount: 4
+      targetAmount: 4,
     },
   });
 
   const [trackingSymbol, setTrackingSymbol] = useState<string>("owl");
 
   const popTiles = (tiles: number[]) => {
-    
     tiles.forEach((square) => {
       const tile: HTMLElement = document.querySelector(
         `[data-id="${square}"]`
@@ -323,20 +322,32 @@ const App = () => {
       (tileBeingReplaced as HTMLElement).getAttribute("data-id")
     );
 
-    console.log("drag end",tileBeingDraggedIndex, tileBeingReplacedIndex);
-    console.log("drag end color",board[tileBeingDraggedIndex])
+    console.log("drag end", tileBeingDraggedIndex, tileBeingReplacedIndex);
+    console.log("drag end color", board[tileBeingDraggedIndex]);
 
-    console.log("tracking color",symbolDataMaps[trackingSymbol].color);
+    console.log("tracking color", symbolDataMaps[trackingSymbol].color);
 
     if (symbolDataMaps[trackingSymbol].color === board[tileBeingDraggedIndex]) {
       console.log(symbolDataMaps);
       console.log("incrementing");
-      setSymbolDataMaps((prev) => ({ ...prev, [trackingSymbol]: { ...prev[trackingSymbol], currAmount: prev[trackingSymbol].currAmount + 1 } }));
+      setSymbolDataMaps((prev) => ({
+        ...prev,
+        [trackingSymbol]: {
+          ...prev[trackingSymbol],
+          currAmount: prev[trackingSymbol].currAmount + 1,
+        },
+      }));
       console.log(symbolDataMaps[trackingSymbol].currAmount);
-      if (symbolDataMaps[trackingSymbol].currAmount === symbolDataMaps[trackingSymbol].targetAmount) {
-        setSymbolDataMaps((prev) => ({ ...prev, [trackingSymbol]: { ...prev[trackingSymbol], discovered: true } }));
+      if (
+        symbolDataMaps[trackingSymbol].currAmount ===
+        symbolDataMaps[trackingSymbol].targetAmount
+      ) {
+        setSymbolDataMaps((prev) => ({
+          ...prev,
+          [trackingSymbol]: { ...prev[trackingSymbol], discovered: true },
+        }));
         // setTrackingSymbol("star");
-        console.log("discovered")
+        console.log("discovered");
       }
     }
 
@@ -364,7 +375,6 @@ const App = () => {
 
     if (tileBeingDragged && tileBeingReplaced) {
       if (isValidMove) {
-
         setIsChainPopping(false);
 
         // reset the tileBeingDragged and tileBeingReplaced states and scales

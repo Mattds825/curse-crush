@@ -50,42 +50,56 @@ const App = () => {
     };
   }>({});
 
+  const [isChainPopping, setIsChainPopping] = useState<boolean>(false);
+
   const initialSymbolDataMaps = {
     owl: {
-      color: "yellow",
+      color: "green",
       poem: "In the darkest night, where wisdom owls soar",
       discovered: false,
       symbol: "𓅔",
+      currAmount: 0,
+      targetAmount: 4,
     },
     star: {
       color: "blue",
       poem: "When the sky reveals a guiding star",
       discovered: false,
       symbol: "𖤐",
+      currAmount: 0,
+      targetAmount: 4
     },
     goat: {
       color: "orange",
       poem: "On cliffs where the horned one stands with might",
       discovered: false,
       symbol: "𓃶",
+      currAmount: 0,
+      targetAmount: 4
     },
     beetle: {
       color: "purple",
       poem: "In shadows deep, where beetles crawl",
       discovered: false,
       symbol: "𓆣",
+      currAmount: 0,
+      targetAmount: 4
     },
     eye: {
       color: "red",
       poem: "A single eye sees all that’s true",
       discovered: false,
       symbol: "𓁿",
+      currAmount: 0,
+      targetAmount: 4
     },
     key: {
       color: "yellow",
       poem: "And at the end, a key for the locks",
       discovered: false,
       symbol: "𓋹",
+      currAmount: 0,
+      targetAmount: 4
     },
   };
 
@@ -95,10 +109,64 @@ const App = () => {
       poem: string;
       discovered: boolean;
       symbol: string;
+      currAmount: number,
+      targetAmount: number
     };
-  }>(initialSymbolDataMaps);
+  }>({
+    owl: {
+      color: "green",
+      poem: "In the darkest night, where wisdom owls soar",
+      discovered: false,
+      symbol: "𓅔",
+      currAmount: 0,
+      targetAmount: 4,
+    },
+    star: {
+      color: "blue",
+      poem: "When the sky reveals a guiding star",
+      discovered: false,
+      symbol: "𖤐",
+      currAmount: 0,
+      targetAmount: 4
+    },
+    goat: {
+      color: "orange",
+      poem: "On cliffs where the horned one stands with might",
+      discovered: false,
+      symbol: "𓃶",
+      currAmount: 0,
+      targetAmount: 4
+    },
+    beetle: {
+      color: "purple",
+      poem: "In shadows deep, where beetles crawl",
+      discovered: false,
+      symbol: "𓆣",
+      currAmount: 0,
+      targetAmount: 4
+    },
+    eye: {
+      color: "red",
+      poem: "A single eye sees all that’s true",
+      discovered: false,
+      symbol: "𓁿",
+      currAmount: 0,
+      targetAmount: 4
+    },
+    key: {
+      color: "yellow",
+      poem: "And at the end, a key for the locks",
+      discovered: false,
+      symbol: "𓋹",
+      currAmount: 0,
+      targetAmount: 4
+    },
+  });
+
+  const [trackingSymbol, setTrackingSymbol] = useState<string>("owl");
 
   const popTiles = (tiles: number[]) => {
+    
     tiles.forEach((square) => {
       const tile: HTMLElement = document.querySelector(
         `[data-id="${square}"]`
@@ -255,7 +323,22 @@ const App = () => {
       (tileBeingReplaced as HTMLElement).getAttribute("data-id")
     );
 
-    console.log(tileBeingDraggedIndex, tileBeingReplacedIndex);
+    console.log("drag end",tileBeingDraggedIndex, tileBeingReplacedIndex);
+    console.log("drag end color",board[tileBeingDraggedIndex])
+
+    console.log("tracking color",symbolDataMaps[trackingSymbol].color);
+
+    if (symbolDataMaps[trackingSymbol].color === board[tileBeingDraggedIndex]) {
+      console.log(symbolDataMaps);
+      console.log("incrementing");
+      setSymbolDataMaps((prev) => ({ ...prev, [trackingSymbol]: { ...prev[trackingSymbol], currAmount: prev[trackingSymbol].currAmount + 1 } }));
+      console.log(symbolDataMaps[trackingSymbol].currAmount);
+      if (symbolDataMaps[trackingSymbol].currAmount === symbolDataMaps[trackingSymbol].targetAmount) {
+        setSymbolDataMaps((prev) => ({ ...prev, [trackingSymbol]: { ...prev[trackingSymbol], discovered: true } }));
+        // setTrackingSymbol("star");
+        console.log("discovered")
+      }
+    }
 
     const validMoves: number[] = [
       tileBeingDraggedIndex - 1,
@@ -281,6 +364,9 @@ const App = () => {
 
     if (tileBeingDragged && tileBeingReplaced) {
       if (isValidMove) {
+
+        setIsChainPopping(false);
+
         // reset the tileBeingDragged and tileBeingReplaced states and scales
         (tileBeingDragged as HTMLElement).style.transform = "unset";
         (tileBeingReplaced as HTMLElement).style.transform = "unset";
@@ -513,7 +599,11 @@ const App = () => {
                 symbolDataMaps[key].discovered ? "discovered" : ""
               }`}
             >
-              <p>{ symbolDataMaps[key].discovered ? symbolDataMaps[key].symbol : "?"}</p>
+              <p>
+                {symbolDataMaps[key].discovered
+                  ? symbolDataMaps[key].symbol
+                  : "?"}
+              </p>
             </div>
           );
         })}

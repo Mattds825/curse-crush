@@ -59,7 +59,8 @@ const App = () => {
       discovered: false,
       symbol: "𓅔",
       currAmount: 0,
-      targetAmount: 4,
+      targetAmount: 1,
+      nextSymbol: "star",
     },
     star: {
       color: "blue",
@@ -67,7 +68,8 @@ const App = () => {
       discovered: false,
       symbol: "𖤐",
       currAmount: 0,
-      targetAmount: 4,
+      targetAmount: 1,
+      nextSymbol: "goat",
     },
     goat: {
       color: "orange",
@@ -75,7 +77,8 @@ const App = () => {
       discovered: false,
       symbol: "𓃶",
       currAmount: 0,
-      targetAmount: 4,
+      targetAmount: 1,
+      nextSymbol: "beetle",
     },
     beetle: {
       color: "purple",
@@ -83,7 +86,8 @@ const App = () => {
       discovered: false,
       symbol: "𓆣",
       currAmount: 0,
-      targetAmount: 4,
+      targetAmount: 1,
+      nextSymbol: "eye",
     },
     eye: {
       color: "red",
@@ -91,7 +95,8 @@ const App = () => {
       discovered: false,
       symbol: "𓁿",
       currAmount: 0,
-      targetAmount: 4,
+      targetAmount: 1,
+      nextSymbol: "key",
     },
     key: {
       color: "yellow",
@@ -99,7 +104,8 @@ const App = () => {
       discovered: false,
       symbol: "𓋹",
       currAmount: 0,
-      targetAmount: 4,
+      targetAmount: 1,
+      nextSymbol: "owl",
     },
   };
 
@@ -111,6 +117,7 @@ const App = () => {
       symbol: string;
       currAmount: number;
       targetAmount: number;
+      nextSymbol: string;
     };
   }>({
     owl: {
@@ -119,7 +126,8 @@ const App = () => {
       discovered: false,
       symbol: "𓅔",
       currAmount: 0,
-      targetAmount: 4,
+      targetAmount: 1,
+      nextSymbol: "star",
     },
     star: {
       color: "blue",
@@ -127,7 +135,8 @@ const App = () => {
       discovered: false,
       symbol: "𖤐",
       currAmount: 0,
-      targetAmount: 4,
+      targetAmount: 1,
+      nextSymbol: "goat",
     },
     goat: {
       color: "orange",
@@ -135,7 +144,8 @@ const App = () => {
       discovered: false,
       symbol: "𓃶",
       currAmount: 0,
-      targetAmount: 4,
+      targetAmount: 1,
+      nextSymbol: "beetle",
     },
     beetle: {
       color: "purple",
@@ -143,7 +153,8 @@ const App = () => {
       discovered: false,
       symbol: "𓆣",
       currAmount: 0,
-      targetAmount: 4,
+      targetAmount: 1,
+      nextSymbol: "eye",
     },
     eye: {
       color: "red",
@@ -151,7 +162,8 @@ const App = () => {
       discovered: false,
       symbol: "𓁿",
       currAmount: 0,
-      targetAmount: 4,
+      targetAmount: 1,
+      nextSymbol: "key",
     },
     key: {
       color: "yellow",
@@ -159,7 +171,8 @@ const App = () => {
       discovered: false,
       symbol: "𓋹",
       currAmount: 0,
-      targetAmount: 4,
+      targetAmount: 1,
+      nextSymbol: "owl",
     },
   });
 
@@ -301,6 +314,8 @@ const App = () => {
     }
   };
 
+  const handleSymbol = () => {};
+
   const dragStart = (e: React.DragEvent<HTMLElement>) => {
     console.log("drag start");
     setTileBeingDragged(e.target);
@@ -348,6 +363,12 @@ const App = () => {
         }));
         // setTrackingSymbol("star");
         console.log("discovered");
+        if (symbolDataMaps[trackingSymbol].nextSymbol != "owl") {
+          // owl is the first symbol the this is not the last symbol
+          setTrackingSymbol(symbolDataMaps[trackingSymbol].nextSymbol);
+        } else {
+          console.log("game over");
+        }
       }
     }
 
